@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.yusuf0080.komdigiapps.ui.screen.MainScreen
+import com.yusuf0080.komdigiapps.navigation.SetupNavGraph
 import com.yusuf0080.komdigiapps.ui.theme.KomdigiAppsTheme
 
 
@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             KomdigiAppsTheme {
-                MainScreen()
+                SetupNavGraph()
             }
         }
     }
