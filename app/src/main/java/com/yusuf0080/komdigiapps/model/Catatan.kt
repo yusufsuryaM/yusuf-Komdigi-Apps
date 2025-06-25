@@ -8,6 +8,7 @@ import androidx.room.PrimaryKey
 data class Catatan(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
+    val userId: Int,
     val judul: String,
     val catatan: String,
     val tanggal: String

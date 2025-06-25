@@ -7,36 +7,36 @@ import com.yusuf0080.komdigiapps.model.Catatan
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 class DetailViewModel(private val dao: CatatanDao) : ViewModel() {
 
-    private val formatter = SimpleDateFormat("yyyyy-MM-dd HH:mm:ss", Locale.US)
+    private val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
 
-    fun insert(judul: String, isi: String) {
+    fun insert(judul: String, isi: String, userId: Int) {
         val catatan = Catatan(
+            userId = userId,
             tanggal = formatter.format(Date()),
             judul = judul,
             catatan = isi
         )
-
         viewModelScope.launch(Dispatchers.IO) {
             dao.insert(catatan)
         }
     }
+
     suspend fun getCatatan(id: Long): Catatan? {
         return dao.getCatatanById(id)
     }
 
-    fun update(id: Long, judul: String, isi: String) {
+    fun update(id: Long, judul: String, isi: String, userId: Int) {
         val catatan = Catatan(
-                id = id,
+            id = id,
+            userId = userId,
             tanggal = formatter.format(Date()),
             judul = judul,
             catatan = isi
         )
-
         viewModelScope.launch(Dispatchers.IO) {
             dao.update(catatan)
         }

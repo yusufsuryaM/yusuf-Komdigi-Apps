@@ -4,20 +4,29 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.yusuf0080.komdigiapps.database.CatatanDb
+import com.yusuf0080.komdigiapps.ui.screen.AuthViewModel
 import com.yusuf0080.komdigiapps.ui.screen.DetailViewModel
 import com.yusuf0080.komdigiapps.ui.screen.MainViewModel
 
 class ViewModelFactory(
     private val context: Context
 ) : ViewModelProvider.Factory {
-    @Suppress("unchecked_cast")
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val  dao = CatatanDb.getInstance(context).dao
-        if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            return MainViewModel(dao) as T
-        } else if (modelClass.isAssignableFrom(DetailViewModel::class.java)) {
-            return DetailViewModel(dao) as T
+        val database = CatatanDb.getInstance(context)
+        val dataStore = SettingsDataStore(context)
+
+        return when {
+            modelClass.isAssignableFrom(MainViewModel::class.java) -> {
+                MainViewModel(database.dao, dataStore) as T
+            }
+            modelClass.isAssignableFrom(DetailViewModel::class.java) -> {
+                DetailViewModel(database.dao) as T
+            }
+            modelClass.isAssignableFrom(AuthViewModel::class.java) -> {
+                AuthViewModel(database.userDao(), dataStore) as T
+            }
+            else -> throw IllegalArgumentException("Unknown ViewModel class")
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

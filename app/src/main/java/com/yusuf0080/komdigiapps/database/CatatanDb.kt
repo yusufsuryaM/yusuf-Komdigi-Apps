@@ -5,30 +5,29 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.yusuf0080.komdigiapps.model.Catatan
+import com.yusuf0080.komdigiapps.model.User
 
-@Database(entities = [Catatan::class], version = 1, exportSchema = false)
+@Database(entities = [Catatan::class, User::class], version = 3, exportSchema = false)
 abstract class CatatanDb : RoomDatabase() {
 
+    abstract fun userDao(): UserDao
     abstract val dao: CatatanDao
 
     companion object {
-
         @Volatile
         private var INSTANCE: CatatanDb? = null
 
         fun getInstance(context: Context): CatatanDb {
-            synchronized(this) {
-                var instance = INSTANCE
-
-                if (instance == null) {
-                    instance = Room.databaseBuilder(
-                        context.applicationContext,
-                        CatatanDb::class.java,
-                        "catatan.db"
-                    ).build()
-                    INSTANCE = instance
-                }
-                return instance
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    CatatanDb::class.java,
+                    "catatan.db"
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
+                INSTANCE = instance
+                instance
             }
         }
     }

@@ -41,7 +41,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.yusuf0080.komdigiapps.R
 import com.yusuf0080.komdigiapps.ui.theme.KomdigiAppsTheme
+import com.yusuf0080.komdigiapps.util.SettingsDataStore
 import com.yusuf0080.komdigiapps.util.ViewModelFactory
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 const val KEY_ID_CATATAN = "idCatatan"
 
@@ -51,6 +54,9 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
     val context = LocalContext.current
     val factory = ViewModelFactory(context)
     val viewModel: DetailViewModel = viewModel(factory = factory)
+
+    val dataStore = SettingsDataStore(context)
+    val userId = runBlocking { dataStore.loggedInUserId.first() }
 
     var judul by remember { mutableStateOf("") }
     var catatan by remember { mutableStateOf("") }
@@ -86,18 +92,19 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
                 actions = {
+                    // BLOK IconButton INI DIUBAH
                     IconButton(onClick = {
-
-                        if (judul == "" || catatan == "") {
+                        if (judul.isBlank() || catatan.isBlank() || userId == null) {
                             Toast.makeText(context, R.string.invalid, Toast.LENGTH_LONG).show()
                             return@IconButton
                         }
                         if (id == null) {
-                            viewModel.insert(judul, catatan)
+                            viewModel.insert(judul, catatan, userId)
                         } else {
-                            viewModel.update(id, judul, catatan)
+                            viewModel.update(id, judul, catatan, userId)
                         }
-                        navController.popBackStack() }) {
+                        navController.popBackStack()
+                    }) {
                         Icon(
                             imageVector = Icons.Outlined.Check,
                             contentDescription = stringResource(R.string.simpan),
@@ -124,7 +131,7 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
         if (id != null && showDialog) {
             DisplayAlertDialog(
                 onDismissRequest = { showDialog = false }) {
-                showDialog= false
+                showDialog = false
                 viewModel.delete(id)
                 navController.popBackStack()
             }

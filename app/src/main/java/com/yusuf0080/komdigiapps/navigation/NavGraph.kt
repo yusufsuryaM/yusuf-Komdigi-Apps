@@ -5,19 +5,25 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.yusuf0080.komdigiapps.ui.screen.DetailScreen
-import com.yusuf0080.komdigiapps.ui.screen.KEY_ID_CATATAN
-import com.yusuf0080.komdigiapps.ui.screen.MainScreen
+import com.yusuf0080.komdigiapps.ui.screen.*
 
 @Composable
-fun SetupNavGraph(navController: NavHostController = rememberNavController()){
+fun SetupNavGraph(
+    navController: NavHostController,
+    startDestination: String
+) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route
-    ){
-        composable(route = Screen.Home.route){
+        startDestination = startDestination
+    ) {
+        composable(route = Screen.Login.route) {
+            LoginScreen(navController = navController)
+        }
+        composable(route = Screen.Register.route) {
+            RegisterScreen(navController = navController)
+        }
+        composable(route = Screen.Home.route) {
             MainScreen(navController)
         }
         composable(route = Screen.FormBaru.route) {

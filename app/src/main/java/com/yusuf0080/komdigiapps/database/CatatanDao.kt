@@ -16,11 +16,11 @@ interface CatatanDao {
     @Update
     suspend fun update(catatan: Catatan)
 
-    @Query("SELECT * FROM catatan ORDER BY tanggal DESC")
-    fun getCatatan(): Flow<List<Catatan>>
+    @Query("SELECT * FROM catatan WHERE userId = :userId ORDER BY tanggal DESC")
+    fun getCatatanForUser(userId: Int): Flow<List<Catatan>>
 
     @Query("SELECT * FROM catatan WHERE id = :id")
-    suspend fun getCatatanById(id: Long): Catatan
+    suspend fun getCatatanById(id: Long): Catatan?
 
     @Query("DELETE FROM catatan WHERE id = :id")
     suspend fun deletById(id: Long)
